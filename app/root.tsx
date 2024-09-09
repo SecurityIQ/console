@@ -6,6 +6,15 @@ import {
   ScrollRestoration,
 } from "@remix-run/react";
 import "@fontsource/inter";
+import styles from "./index.css?url";
+import { LinksFunction, LoaderFunction } from "@remix-run/node";
+import Navbar from "./components/navbar";
+import { rootAuthLoader } from "@clerk/remix/ssr.server";
+import { ClerkApp } from "@clerk/remix";
+
+export const links: LinksFunction = () => [{ rel: "stylesheet", href: styles }];
+
+export const loader: LoaderFunction = (args) => rootAuthLoader(args);
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -25,6 +34,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function App() {
+function App() {
   return <Outlet />;
 }
+
+export default ClerkApp(App);

@@ -1,5 +1,6 @@
-import { Button } from "@mui/joy";
 import type { MetaFunction } from "@remix-run/node";
+import { css } from "styled-system/css";
+import Navbar from "~/components/navbar";
 
 export const meta: MetaFunction = () => {
   return [
@@ -10,9 +11,13 @@ export const meta: MetaFunction = () => {
 
 export default function Index() {
   return (
-    <>
-      <span>Hello World</span>
-      <Button variant="solid">Hello!</Button>
-    </>
+    <div className={css({ h: "full" })}>
+      <div
+        className={css({
+          display: "flex",
+          flexDirection: "column",
+        })}
+      ></div>
+    </div>
   );
 }
