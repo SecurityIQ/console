@@ -1,4 +1,5 @@
-import { UserProfile } from "@clerk/remix";
+import { UserButton, UserProfile } from "@clerk/remix";
+import { Link } from "@remix-run/react";
 import { css } from "styled-system/css";
 
 export default function Navbar() {
@@ -15,15 +16,16 @@ export default function Navbar() {
           p: 6,
         })}
       >
-        <span
+        <Link
           className={css({
-            fontSize: "24px",
+            fontSize: 20,
             fontWeight: "bold",
           })}
+          to='/dashboard'
         >
           SecurityIQ Console
-        </span>
-        <UserProfile />
+        </Link>
+        <UserButton />
       </div>
     </nav>
   );

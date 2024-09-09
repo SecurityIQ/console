@@ -1,4 +1,5 @@
-import type { MetaFunction } from "@remix-run/node";
+import { getAuth } from "@clerk/remix/ssr.server";
+import { LoaderFunction, LoaderFunctionArgs, redirect, type MetaFunction } from "@remix-run/node";
 import { css } from "styled-system/css";
 import Navbar from "~/components/navbar";
 
@@ -9,15 +10,15 @@ export const meta: MetaFunction = () => {
   ];
 };
 
+export const loader: LoaderFunction = async (args) => {
+  const auth = await getAuth(args);
+  console.log(auth.userId)
+  if (!auth.userId) {
+    return redirect("/sign-in");
+  }
+  return redirect("/dashboard");
+};
+
 export default function Index() {
-  return (
-    <div className={css({ h: "full" })}>
-      <div
-        className={css({
-          display: "flex",
-          flexDirection: "column",
-        })}
-      ></div>
-    </div>
-  );
+ return <></>;
 }
