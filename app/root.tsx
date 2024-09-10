@@ -8,7 +8,7 @@ import {
 import "@fontsource/inter";
 import styles from "./index.css?url";
 import { LinksFunction, LoaderFunction } from "@remix-run/node";
-import Navbar from "./components/navbar";
+import Navbar from "./components/topbar";
 import { rootAuthLoader } from "@clerk/remix/ssr.server";
 import { ClerkApp } from "@clerk/remix";
 

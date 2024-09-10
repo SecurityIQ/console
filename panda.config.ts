@@ -20,6 +20,13 @@ export default defineConfig({
         fonts: {
           body: { value: "Inter, system-ui, sans-serif" },
         },
+        colors: {
+          primary: { value: "#6366f1" },
+          'panel-bg': { value: "#ffffff" },
+        },
+        shadows: {
+          card: {value: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)" }
+        }
       },
     },
   },
@@ -31,7 +38,18 @@ export default defineConfig({
       h: "full",
     },
     body: {
-      bg: { base: "white", _dark: "#2c2c2c" },
+      bg: { base: "#f3f4f6", _dark: "#2c2c2c" },
+    },
+    h1: {
+      fontSize: "2xl",
+      fontWeight: "bold",
+      color: "primary",
+      marginBottom: "16px",
+    },
+    h2: {
+      fontSize: "xl",
+      fontWeight: "bold",
+      marginBottom: "16px",
     },
   },
 });

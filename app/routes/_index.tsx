@@ -1,7 +1,7 @@
 import { getAuth } from "@clerk/remix/ssr.server";
 import { LoaderFunction, LoaderFunctionArgs, redirect, type MetaFunction } from "@remix-run/node";
 import { css } from "styled-system/css";
-import Navbar from "~/components/navbar";
+import Navbar from "~/components/topbar";
 
 export const meta: MetaFunction = () => {
   return [
