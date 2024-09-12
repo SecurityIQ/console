@@ -2,6 +2,7 @@ import { Outlet } from "@remix-run/react";
 import Topbar from "~/components/topbar";
 import Navbar from "~/components/navbar";
 import { css } from "styled-system/css";
+import { Toaster } from "sonner";
 
 export default function Layout() {
   return (
@@ -10,6 +11,7 @@ export default function Layout() {
       minHeight: "100vh",
       padding: "24px",
     })}>
+      <Toaster />
       <Navbar />
       <main className={css({
         flexGrow: 1,

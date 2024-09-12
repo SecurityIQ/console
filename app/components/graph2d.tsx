@@ -1,8 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { GraphData } from 'react-force-graph-2d';
 import { ClientOnly } from 'remix-utils/client-only';
+import { css } from 'styled-system/css';
 
 interface Props {
-    data: any;
+    data: GraphData;
 }
 
 const ForceGraph2D = React.lazy(() => import('react-force-graph').then(mod => ({ default: mod.ForceGraph2D })));
@@ -29,7 +31,11 @@ export default function Graph2D({ data }: Props) {
     }, [])
 
     return (
-        <div ref={containerRef} style={{ width: '100%', height: '100%' }}>
+        <div ref={containerRef} className={css({
+            width: '100%',
+            height: '100%',
+            color: 'black'
+        })}>
             <ClientOnly fallback={<div>Loading...</div>}>
                 {() => (
                     <React.Suspense fallback={<div>Loading graph...</div>}>

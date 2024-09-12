@@ -23,6 +23,15 @@ importers:
       '@remix-run/serve':
         specifier: ^2.11.2
         version: 2.11.2(typescript@5.5.4)
+      '@rvf/remix':
+        specifier: ^6.1.1
+        version: 6.1.1(@remix-run/node@2.11.2(typescript@5.5.4))(@remix-run/react@2.11.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.5.4))(@remix-run/server-runtime@2.11.2(typescript@5.5.4))(@rvf/core@6.1.1(@rvf/set-get@6.0.1)(react@18.3.1))(@rvf/set-get@6.0.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@rvf/zod':
+        specifier: ^6.0.1
+        version: 6.0.1(@rvf/core@6.1.1(@rvf/set-get@6.0.1)(react@18.3.1))(@rvf/set-get@6.0.1)(zod@3.23.8)
+      '@tanstack/react-table':
+        specifier: ^8.20.5
+        version: 8.20.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       isbot:
         specifier: ^4.1.0
         version: 4.4.0
@@ -43,7 +52,13 @@ importers:
         version: 1.25.5(react@18.3.1)
       remix-utils:
         specifier: ^7.6.0
-        version: 7.6.0(@remix-run/node@2.11.2(typescript@5.5.4))(@remix-run/react@2.11.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.5.4))(@remix-run/router@1.19.1)(react@18.3.1)
+        version: 7.6.0(@remix-run/node@2.11.2(typescript@5.5.4))(@remix-run/react@2.11.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.5.4))(@remix-run/router@1.19.1)(react@18.3.1)(zod@3.23.8)
+      sonner:
+        specifier: ^1.5.0
+        version: 1.5.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      zod:
+        specifier: ^3.23.8
+        version: 3.23.8
     devDependencies:
       '@pandacss/dev':
         specifier: ^0.45.2
@@ -1036,6 +1051,38 @@ packages:
   '@rtsao/scc@1.1.0':
     resolution: {integrity: sha512-zt6OdqaDoOnJ1ZYsCYGt9YmWzDXl4vQdKTyJev62gFhRGKdx7mcT54V9KIjg+d2wi9EXsPvAPKe7i7WjfVWB8g==}
 
+  '@rvf/core@6.1.1':
+    resolution: {integrity: sha512-hMwcltiVs8avSj+UBhGG/tbPOcLXdNcc5hO0y/YtCdRHsv64B8/TmvNyUG9gcPb0AXH9LjRafXhvHGSb6qfMkg==}
+    peerDependencies:
+      '@rvf/set-get': '>= 0.0.0 < 7.0.0'
+      react: ^17.0.2 || ^18.0.0
+
+  '@rvf/react@6.1.1':
+    resolution: {integrity: sha512-LzY0RDNyhZwn1wUgd0SP3v+I4TIDtxVxPBpBEOZT9MxAH7gpZAueYBmkGfIAaH3dBjuVEOwHix6kzfDQLPWS9A==}
+    peerDependencies:
+      '@rvf/core': '>= 0.0.0 < 7.0.0'
+      '@rvf/set-get': '>= 0.0.0 < 7.0.0'
+      react: ^17.0.2 || ^18.0.0
+      react-dom: ^17.0.2 || ^18.0.0
+
+  '@rvf/remix@6.1.1':
+    resolution: {integrity: sha512-9QnXzr13fzechBGOig7+JmuN6/MeNiORpbMQndVxEngVZeJuOOPHvO789qrBkEeA1uk5GyNRp9c7kx9dmmIA/w==}
+    peerDependencies:
+      '@remix-run/node': '>= 1.16.1 <3.0.0'
+      '@remix-run/react': '>= 1.15.0 <3.0.0'
+      '@remix-run/server-runtime': '>= 1.16.1 <3.0.0'
+      react: ^17.0.2 || ^18.0.0
+
+  '@rvf/set-get@6.0.1':
+    resolution: {integrity: sha512-v7WsUhescq4O9biLDeAkSbOtodw+1VEQH7vB01CDPbxuOnrrgsu0pJDdrPJhvyCtJ5sG0FIEkuYcysGl/zIovA==}
+
+  '@rvf/zod@6.0.1':
+    resolution: {integrity: sha512-HbSA/7JfURieS/zFYVqNRQG8MdGccrTSAT7KR6o+Nq9ihmsOByx4HXlzrAUrm/j2/oC0a7vMYV+B5CEE+OlVfQ==}
+    peerDependencies:
+      '@rvf/core': '>= 0.0.0 < 7.0.0'
+      '@rvf/set-get': '>= 0.0.0 < 7.0.0'
+      zod: '>= 3.11.0'
+
   '@sindresorhus/is@0.14.0':
     resolution: {integrity: sha512-9NET910DNaIPngYnLLPeg+Ogzqsi9uM4mSboU5y6p8S5DzMTVEsJZrawi+BoDNUVBa2DhJqQYUFvMDfgU062LQ==}
     engines: {node: '>=6'}
@@ -1043,6 +1090,17 @@ packages:
   '@szmarczak/http-timer@1.1.2':
     resolution: {integrity: sha512-XIB2XbzHTN6ieIjfIMV9hlVcfPU26s2vafYWQcZHWXHOxiaRZYEDKEwdl129Zyg50+foYV2jCgtrqSA6qNuNSA==}
     engines: {node: '>=6'}
+
+  '@tanstack/react-table@8.20.5':
+    resolution: {integrity: sha512-WEHopKw3znbUZ61s9i0+i9g8drmDo6asTWbrQh8Us63DAk/M0FkmIqERew6P71HI75ksZ2Pxyuf4vvKh9rAkiA==}
+    engines: {node: '>=12'}
+    peerDependencies:
+      react: '>=16.8'
+      react-dom: '>=16.8'
+
+  '@tanstack/table-core@8.20.5':
+    resolution: {integrity: sha512-P9dF7XbibHph2PFRz8gfBKEXEY/HJPOhym8CHmjF8y3q5mWpKx9xtZapXQUWCgkqvsK0R46Azuz+VaxD4Xl+Tg==}
+    engines: {node: '>=12'}
 
   '@ts-morph/common@0.22.0':
     resolution: {integrity: sha512-HqNBuV/oIlMKdkLshXd1zKBqNQCsuPEsgQOkfFQ/eUKjRlwndXW1AjN9LVkBEIukm00gGXSRmfkl0Wv5VXLnlw==}
@@ -2397,6 +2455,9 @@ packages:
   ignore@5.3.2:
     resolution: {integrity: sha512-hsBTNUqQTDwkWtcdYI2i06Y/nUBEsNEDJKjWdigLvegy8kDuJAS8uRlpkkcQpyEXL0Z/pjDy5HBmMjRCJ2gq+g==}
     engines: {node: '>= 4'}
+
+  immer@10.1.1:
+    resolution: {integrity: sha512-s2MPrmjovJcoMaHtx6K11Ra7oD05NT97w1IC5zpMkT6Atjr7H8LjaDd81iIxUYpMKSRRNMJE703M1Fhr/TctHw==}
 
   import-fresh@3.3.0:
     resolution: {integrity: sha512-veYYhQa+D1QBKznvhUHxb8faxlrwUnxseDAbAp457E0wLNio2bOSKnjYDhMj+YiAq61xrMGhQk9iXVk5FzgQMw==}
@@ -3882,6 +3943,12 @@ packages:
     resolution: {integrity: sha512-YTywJG93yxwHLgrYLZjlC75moVEX04LZM4FHfihjHe1FCXm+QaLOFfSf535aXOAd0ArVQMWUAe8ZPm4VtWyXaA==}
     engines: {node: '>=12'}
 
+  sonner@1.5.0:
+    resolution: {integrity: sha512-FBjhG/gnnbN6FY0jaNnqZOMmB73R+5IiyYAw8yBj7L54ER7HB3fOSE5OFiQiE2iXWxeXKvg6fIP4LtVppHEdJA==}
+    peerDependencies:
+      react: ^18.0.0
+      react-dom: ^18.0.0
+
   source-map-js@1.2.1:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
     engines: {node: '>=0.10.0'}
@@ -4454,6 +4521,9 @@ packages:
   yocto-queue@0.1.0:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
+
+  zod@3.23.8:
+    resolution: {integrity: sha512-XBx9AXhXktjUqnepgTiE5flcKIYWi/rme0Eaj+5Y0lftuGBq+jyRu/md4WnuxqgP1ubdpNCsYEYPxrzVHD8d6g==}
 
   zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
@@ -5484,11 +5554,52 @@ snapshots:
 
   '@rtsao/scc@1.1.0': {}
 
+  '@rvf/core@6.1.1(@rvf/set-get@6.0.1)(react@18.3.1)':
+    dependencies:
+      '@rvf/set-get': 6.0.1
+      immer: 10.1.1
+      react: 18.3.1
+
+  '@rvf/react@6.1.1(@rvf/core@6.1.1(@rvf/set-get@6.0.1)(react@18.3.1))(@rvf/set-get@6.0.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@rvf/core': 6.1.1(@rvf/set-get@6.0.1)(react@18.3.1)
+      '@rvf/set-get': 6.0.1
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+
+  '@rvf/remix@6.1.1(@remix-run/node@2.11.2(typescript@5.5.4))(@remix-run/react@2.11.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.5.4))(@remix-run/server-runtime@2.11.2(typescript@5.5.4))(@rvf/core@6.1.1(@rvf/set-get@6.0.1)(react@18.3.1))(@rvf/set-get@6.0.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@remix-run/node': 2.11.2(typescript@5.5.4)
+      '@remix-run/react': 2.11.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.5.4)
+      '@remix-run/server-runtime': 2.11.2(typescript@5.5.4)
+      '@rvf/react': 6.1.1(@rvf/core@6.1.1(@rvf/set-get@6.0.1)(react@18.3.1))(@rvf/set-get@6.0.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react: 18.3.1
+    transitivePeerDependencies:
+      - '@rvf/core'
+      - '@rvf/set-get'
+      - react-dom
+
+  '@rvf/set-get@6.0.1': {}
+
+  '@rvf/zod@6.0.1(@rvf/core@6.1.1(@rvf/set-get@6.0.1)(react@18.3.1))(@rvf/set-get@6.0.1)(zod@3.23.8)':
+    dependencies:
+      '@rvf/core': 6.1.1(@rvf/set-get@6.0.1)(react@18.3.1)
+      '@rvf/set-get': 6.0.1
+      zod: 3.23.8
+
   '@sindresorhus/is@0.14.0': {}
 
   '@szmarczak/http-timer@1.1.2':
     dependencies:
       defer-to-connect: 1.1.3
+
+  '@tanstack/react-table@8.20.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@tanstack/table-core': 8.20.5
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+
+  '@tanstack/table-core@8.20.5': {}
 
   '@ts-morph/common@0.22.0':
     dependencies:
@@ -7273,6 +7384,8 @@ snapshots:
 
   ignore@5.3.2: {}
 
+  immer@10.1.1: {}
+
   import-fresh@3.3.0:
     dependencies:
       parent-module: 1.0.1
@@ -8721,7 +8834,7 @@ snapshots:
       mdast-util-to-hast: 12.3.0
       unified: 10.1.2
 
-  remix-utils@7.6.0(@remix-run/node@2.11.2(typescript@5.5.4))(@remix-run/react@2.11.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.5.4))(@remix-run/router@1.19.1)(react@18.3.1):
+  remix-utils@7.6.0(@remix-run/node@2.11.2(typescript@5.5.4))(@remix-run/react@2.11.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.5.4))(@remix-run/router@1.19.1)(react@18.3.1)(zod@3.23.8):
     dependencies:
       type-fest: 4.26.1
     optionalDependencies:
@@ -8729,6 +8842,7 @@ snapshots:
       '@remix-run/react': 2.11.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.5.4)
       '@remix-run/router': 1.19.1
       react: 18.3.1
+      zod: 3.23.8
 
   require-like@0.1.2: {}
 
@@ -8904,6 +9018,11 @@ snapshots:
       map-obj: 4.3.0
       snake-case: 3.0.4
       type-fest: 2.19.0
+
+  sonner@1.5.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+    dependencies:
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
 
   source-map-js@1.2.1: {}
 
@@ -9531,5 +9650,7 @@ snapshots:
   yaml@2.5.1: {}
 
   yocto-queue@0.1.0: {}
+
+  zod@3.23.8: {}
 
   zwitch@2.0.4: {}
