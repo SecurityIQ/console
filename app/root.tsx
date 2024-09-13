@@ -11,6 +11,7 @@ import { LinksFunction, LoaderFunction } from "@remix-run/node";
 import Navbar from "./components/topbar";
 import { rootAuthLoader } from "@clerk/remix/ssr.server";
 import { ClerkApp } from "@clerk/remix";
+import { Provider } from "jotai";
 
 export const links: LinksFunction = () => [{ rel: "stylesheet", href: styles }];
 
@@ -35,7 +36,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 function App() {
-  return <Outlet />;
+  return (
+    <Provider>
+      <Outlet />
+    </Provider>
+  );
 }
 
 export default ClerkApp(App);
