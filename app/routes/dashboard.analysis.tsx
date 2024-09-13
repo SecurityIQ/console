@@ -35,7 +35,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
     let indicator: Indicator = { value: '', type: 'ip' };
 
-    const errors: { type: string, value: string } = { type: '', value: '' };
+    const errors: { error: boolean, type: string, value: string } = { error: false, type: '', value: '' };
 
     if (formType && !['ip', 'domain', 'hash', 'url'].includes(formType as string)) {
         errors.type = 'Invalid Indicator Type';
@@ -46,7 +46,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
             value: formIndicator as string,
             type: formType as 'ip' | 'domain' | 'hash' | 'url'
         }
-    } 
+    }
 
     // regex matching for ip, domain, hash, url
     switch (indicator.type) {
@@ -56,7 +56,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
             }
             break;
         case 'domain':
-            if(!/^((?!-))(xn--)?[a-z0-9][a-z0-9-_]{0,61}[a-z0-9]{0,1}\.(xn--)?([a-z0-9\-]{1,61}|[a-z0-9-]{1,30}\.[a-z]{2,})$/.test(indicator.value)) {
+            if (!/^((?!-))(xn--)?[a-z0-9][a-z0-9-_]{0,61}[a-z0-9]{0,1}\.(xn--)?([a-z0-9\-]{1,61}|[a-z0-9-]{1,30}\.[a-z]{2,})$/.test(indicator.value)) {
                 errors.value = 'Invalid Domain';
             }
             break;
@@ -74,7 +74,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
             break;
     }
 
-    console.log(errors)
+    if (errors.type !== '' || errors.value !== '') {
+        errors.error = true;
+        return { errors, indicator };
+    }
+
+    // if does not error, send to db before returning back
 
     return { errors, indicator };
 };
@@ -96,8 +101,11 @@ export default function IOCAnalysis() {
             if (actionData?.errors.value !== '') {
                 toast(actionData?.errors.value);
             }
-            if (actionData?.indicator.value && actionData?.indicator.type && actionData?.errors.type === '' && actionData?.errors.value === '') {
-                setIndicators(prevIndicators => [...prevIndicators, actionData.indicator]);
+
+            if (!actionData?.errors.error) {
+                if (actionData?.indicator.value && actionData?.indicator.type) {
+                    setIndicators(prevIndicators => [...prevIndicators, actionData.indicator]);
+                }
             }
         }
     }, [actionData]);
