@@ -1,16 +1,16 @@
 import { getAuth } from "@clerk/remix/ssr.server";
 import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { Form, redirect, useActionData, useLoaderData } from "@remix-run/react";
+import { Form, redirect, useActionData, useLoaderData, useNavigate, useRevalidator } from "@remix-run/react";
 import { withZod } from "@rvf/zod";
-import { eq } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import { useEffect, useState } from "react";
 import { GraphData, LinkObject, NodeObject } from "react-force-graph-2d";
 import { toast } from "sonner";
 import { css } from "styled-system/css";
-import { z } from "zod";
+import { set, z } from "zod";
 import { getCookie } from "~/.server/cookie";
 import { db } from "~/.server/db";
-import { analysis_workspaces, indicators, projects, user_projects } from "~/.server/schema";
+import { analysis_workspaces, indicators, iocs as iocs_per_ws, projects, user_projects } from "~/.server/schema";
 import Button from "~/components/button";
 import Graph2D from "~/components/graph2d";
 import IndicatorTable from "~/components/indicator-table";
@@ -44,49 +44,60 @@ export const loader = async (args: LoaderFunctionArgs) => {
 
   // load all project workspaces
   const cookies = getCookie(args.request)
-  const selectedProjectId = cookies.get('current_project')
+  let selectedProjectId = cookies.get('current_project')
 
+
+  const projectQuery = await db
+    .select({
+      project_id: projects.id,
+      project_name: projects.name
+    })
+    .from(projects)
+    .innerJoin(user_projects, eq(user_projects.project_id, projects.id))
+    .where(and(eq(user_projects.user_id, userId), selectedProjectId
+      ? eq(projects.id, selectedProjectId)
+      : undefined
+    ))
+    .limit(1);
+
+  if (projectQuery.length === 0) {
+    return redirect("/dashboard");
+  }
+
+  // set the selectedprojectid to the first project in the list if it is not set
   if (!selectedProjectId) {
-    return redirect("/dashboard");
+    selectedProjectId = projectQuery[0].project_id;
   }
 
-  // check if user has access to the selected project
-  const userProjects = await db.select({ project_id: user_projects.project_id }).from(user_projects).where(eq(user_projects.user_id, userId));
-  const selectedProject = await db.select({ project_id: projects.id, project_name: projects.name }).from(projects).where(eq(projects.id, selectedProjectId));
+  const selectedProject = projectQuery[0]; // the first one is either the selected one or the first one in the list
 
-  if (!selectedProject || !userProjects.some(project => project.project_id === selectedProjectId)) {
-    return redirect("/dashboard");
+  // Fetch all the workspaces for the selected project (fetch all so we can display the list of workspaces as menu)
+  const workspaces = await db
+    .select({
+      workspace_id: analysis_workspaces.id,
+      workspace_name: analysis_workspaces.name
+    })
+    .from(analysis_workspaces)
+    .where(eq(analysis_workspaces.project_id, selectedProject.project_id));
+
+  const workspaces_dict: Record<string, string> = Object.fromEntries(
+    workspaces.map((workspace) => [workspace.workspace_id, workspace.workspace_name])
+  );
+
+  // Load the currently selected workspace
+  const selectedWorkspaceId = cookies.get('current_analysis_workspace');
+  let selectedWorkspace = workspaces.find(workspace => workspace.workspace_id === selectedWorkspaceId) || workspaces[0];
+
+  // Check if the selected workspace belongs to the current project
+  if (!workspaces.some(workspace => workspace.workspace_id === selectedWorkspace.workspace_id)) {
+    selectedWorkspace = workspaces[0]; // Default to the first workspace if the selected one is not valid
   }
 
-  console.log(selectedProject)
-
-  // fetch all the workspaces for the selected project
-  const workspaces = await db.select({ workspace_id: analysis_workspaces.id, workspace_name: analysis_workspaces.name }).from(analysis_workspaces).where(eq(analysis_workspaces.project_id, selectedProjectId));
-
-  const workspaces_dict: Record<string, string> = {};
-  workspaces.map((workspace) => {
-    workspaces_dict[workspace.workspace_id] = workspace.workspace_name;
-  });
-
-  // load the currently selected workspace
-  const selectedWorkspaceId = cookies.get('current_analysis_workspace')
-  const selectedWorkspace = workspaces.find(workspace => workspace.workspace_id === selectedWorkspaceId)
-
-  // check if the selected workspace is valid (user have actual access)
-  if (!selectedWorkspace) {
-    return redirect("/dashboard");
-  }
-
-  // check with the selected project if the user has access to the selected workspace
-  const userWorkspaces = await db.select({ workspace_id: analysis_workspaces.id }).from(analysis_workspaces).where(eq(analysis_workspaces.project_id, selectedProjectId));
-  const selectedWorkspaceAccess = userWorkspaces.some(workspace => workspace.workspace_id === selectedWorkspaceId);
-
-  if (!selectedWorkspaceAccess) {
-    return redirect("/dashboard");
-  }
+  // get all iocs from the selected workspace with its type
+  const wsIOCs: { id: string, indicator: string, type: string }[] = await db.select({ id: iocs_per_ws.id, indicator: iocs_per_ws.indicator, type: indicators.type }).from(iocs_per_ws).where(eq(iocs_per_ws.analysis_workspace_id, selectedWorkspace.workspace_id)).innerJoin(indicators, eq(indicators.indicator, iocs_per_ws.indicator));
 
   // pull all the indicators for the selected workspace
-  return { available_workspaces: workspaces_dict, selected_workspace: selectedWorkspace };
+  return { available_workspaces: workspaces_dict, selected_workspace: selectedWorkspace, iocs: wsIOCs };
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -115,7 +126,41 @@ export default function IOCAnalysis() {
   const [formAction, setFormAction] = useState<string>("");
 
   const [iocType, setIocType] = useState<string>("");
-  const {selectedAnalysisWorkspaceId, setSelectedAnalysisWorkspace} = useSelectedAnalysisWorkspace(); 
+  const { selectedAnalysisWorkspaceId, setSelectedAnalysisWorkspace } = useSelectedAnalysisWorkspace();
+
+  useEffect(() => {
+    // fetch the initial data from the selected workspace according to the cookie
+    if (loaderData.selected_workspace) {
+      setSelectedAnalysisWorkspace(loaderData.selected_workspace.workspace_id)
+    }
+  }, [])
+
+  const handleWorkspaceChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedAnalysisWorkspace(e.target.value);
+  }
+
+  useEffect(() => {
+    if (loaderData.iocs) {
+      setGraphData({
+        nodes: loaderData.iocs.map((ioc) => {
+          return {
+            id: ioc.indicator,
+            group: 1,
+          }
+        }),
+        links: [],
+      })
+
+      setIndicators(loaderData.iocs.map((ioc) => {
+        return {
+          value: ioc.indicator,
+          type: ioc.type as "ip" | "domain" | "hash" | "url",
+        }
+      }))
+
+    }
+
+  }, [loaderData])
 
   useEffect(() => {
     if (actionData) {
@@ -145,7 +190,7 @@ export default function IOCAnalysis() {
         }
       }
     }
-  }, [actionData, formAction]);
+  }, [actionData]);
 
   const addNode = (newNode: NodeObject) => {
     setGraphData((prevData) => ({
@@ -236,7 +281,7 @@ export default function IOCAnalysis() {
             name="workspace"
             value={selectedAnalysisWorkspaceId}
             options={loaderData.available_workspaces}
-            onChange={(e) => setSelectedAnalysisWorkspace(e.target.value)}
+            onChange={handleWorkspaceChange}
           />
         </div>
         <Form

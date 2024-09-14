@@ -1,5 +1,5 @@
 import { db } from "~/.server/db";
-import { indicators } from "~/.server/schema";
+import { indicators, iocs } from "~/.server/schema";
 import { createId } from '@paralleldrive/cuid2'
 
 interface addIOCResult {
@@ -75,13 +75,23 @@ export const addIOC = async (formData: FormData, analysis_workspace_id: string):
     if (errors.type !== "" || errors.value !== "") {
       errors.error = true;
     } else {
-        console.log('adding')
       // save to database
       // TODO: Also store the indicator in iocs table and not just the indicators, which is shared for all workspaces and projects
 
+      console.log('ws', analysis_workspace_id)
+
+      if (analysis_workspace_id === "") {
+        return { errors, indicator }; // throw error regarding analysis
+      }
       await db.insert(indicators).values({
         indicator: indicator.value,
         type: indicator.type,
+      }).onConflictDoNothing({ target: indicators.indicator });
+
+      await db.insert(iocs).values({
+        id: createId(),
+        indicator: indicator.value,
+        analysis_workspace_id: analysis_workspace_id,
       });
     }
 

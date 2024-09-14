@@ -8,6 +8,20 @@
       "when": 1726304122640,
       "tag": "0000_graceful_killraven",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1726317268846,
+      "tag": "0001_many_prowler",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1726319610940,
+      "tag": "0002_lyrical_sunspot",
+      "breakpoints": true
     }
   ]
 }

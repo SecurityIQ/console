@@ -6,10 +6,10 @@ export function useSelectedAnalysisWorkspace() {
     const [selectedAnalysisWorkspaceId, setSelectedAnalysisWorkspaceId] = useAtom(currentAnalysisWorkspaceAtom);
     const fetcher = useFetcher()
 
-    const setSelectedAnalysisWorkspace = (project_id: string) => {
-        setSelectedAnalysisWorkspaceId(project_id);
+    const setSelectedAnalysisWorkspace = (analysis_workspace_id: string) => {
+        setSelectedAnalysisWorkspaceId(analysis_workspace_id);
         fetcher.submit(
-            { project_id: project_id || '' },
+            { analysis_workspace_id: analysis_workspace_id || '' },
             { method: "post", action: "/api/set-analysis-workspace" }
         )
     }

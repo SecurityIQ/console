@@ -1,0 +1,1 @@
+ALTER TABLE "iocs" ALTER COLUMN "indicator" SET NOT NULL;

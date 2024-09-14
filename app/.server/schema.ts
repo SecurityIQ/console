@@ -75,9 +75,9 @@ export const iocs = pgTable("iocs", {
   analysis_workspace_id: varchar("analysis_workspace_id", { length: 100 }).references(
     () => analysis_workspaces.id
   ),
-  indicator: varchar("indicator", { length: 100 }).references(
+  indicator: varchar("indicator", { length: 255 }).references(
     () => indicators.indicator
-  ),
+  ).notNull(),
   context: text("context"),
   created_at: timestamp("created_at").defaultNow(),
   updated_at: timestamp("updated_at")
