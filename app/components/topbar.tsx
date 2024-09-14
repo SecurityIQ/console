@@ -4,27 +4,27 @@ import { css } from "styled-system/css";
 import SelectBox from "./selectbox";
 import { useAtom } from "jotai";
 import { currentProjectAtom } from "~/state";
-import { LoaderFunction } from "@remix-run/node";
-import db from "~/.server/db";
-import { user_projects } from "~/.server/schema";
-import { getAuth } from "@clerk/remix/ssr.server";
-import { eq } from "drizzle-orm";
+import { Project } from "~/.server/schema";
+import { useEffect } from "react";
+import { useSelectedProject } from "~/hooks/use-selected-project";
 
-export const loader: LoaderFunction = async (args) => {
-  const { userId } = await getAuth(args);
-  // get all the projects that the current user has access to
+interface Props {
+  available_projects: Record<string, string>;
+}
 
-  if (!userId) {
-    return redirect("/sign-in");
-  }
+export default function Topbar(props: Props) {
+  const {selectedProjectId, setSelectedProject} = useSelectedProject();
+  const fetcher = useFetcher()
 
-  db.select().from(user_projects).where(eq(user_projects.user_id, userId));
-};
+  useEffect(() => {
+    if (selectedProjectId === "") {
+      const firstProjectId = Object.keys(props.available_projects)[0];
+      setSelectedProject(firstProjectId);
+    }
+  })
 
-export default function Topbar() {
-  const [currentProject, setCurrentProject] = useAtom(currentProjectAtom);
   const onProjectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setCurrentProject(e.target.value);
+    setSelectedProject(e.target.value);
   };
 
   return (
@@ -54,9 +54,9 @@ export default function Topbar() {
         </Link>
         <div>
           <SelectBox
-            options={{ dev: "Dev Project", prod: "prod" }}
+            options={props.available_projects}
             name="current_project"
-            value={currentProject}
+            value={selectedProjectId}
             onChange={onProjectChange}
           />
         </div>

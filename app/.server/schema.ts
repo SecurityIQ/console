@@ -13,7 +13,7 @@ export const analysis_workspaces = pgTable("analysis_workspaces", {
   project_id: varchar("project_id", { length: 100 }).references(
     () => projects.id
   ), // project that the workspace belongs to
-  name: varchar("name", { length: 255 }),
+  name: varchar("name", { length: 255 }).notNull(),
   description: text("description"),
   created_at: timestamp("created_at").defaultNow(),
   updated_at: timestamp("updated_at")
@@ -26,7 +26,7 @@ export type NewAnalysisWorkspace = typeof analysis_workspaces.$inferInsert;
 
 export const projects = pgTable("projects", {
   id: varchar("id", { length: 100 }).primaryKey(),
-  name: varchar("name", { length: 255 }),
+  name: varchar("name", { length: 255 }).notNull(),
   description: text("description"),
   project_owner_id: varchar("project_owner", { length: 100 }), // user_id from clerk
   created_at: timestamp("created_at").defaultNow(),
@@ -52,9 +52,8 @@ export type NewUserProject = typeof user_projects.$inferInsert;
 export const indicators = pgTable(
   "indicators",
   {
-    id: varchar("id", { length: 255 }).primaryKey(),
+    indicator: varchar("indicator", { length: 255 }).primaryKey(),
     type: varchar("type", { length: 255 }).notNull(),
-    indicator: varchar("indicator", { length: 255 }).notNull(),
     created_at: timestamp("created_at").defaultNow(),
     updated_at: timestamp("updated_at")
       .defaultNow()
@@ -70,13 +69,14 @@ export const indicators = pgTable(
   }
 );
 
+// a list of indicator that is in analysis workspace
 export const iocs = pgTable("iocs", {
   id: varchar("id", { length: 100 }).primaryKey(),
-  workspace_id: varchar("workspace_id", { length: 100 }).references(
+  analysis_workspace_id: varchar("analysis_workspace_id", { length: 100 }).references(
     () => analysis_workspaces.id
   ),
-  indicator_id: varchar("indicator_id", { length: 100 }).references(
-    () => indicators.id
+  indicator: varchar("indicator", { length: 100 }).references(
+    () => indicators.indicator
   ),
   context: text("context"),
   created_at: timestamp("created_at").defaultNow(),
@@ -92,7 +92,7 @@ export type NewIoc = typeof iocs.$inferInsert;
 
 export const rawEnrichedInfo = pgTable("raw_enriched_info", {
   id: varchar("id", { length: 100 }).primaryKey(),
-  ioc_id: varchar("ioc_id", { length: 100 }).references(() => indicators.id),
+  indicator: varchar("indicator", { length: 100 }).references(() => indicators.indicator),
   source: varchar("source", { length: 255 }).notNull(),
   data: jsonb("data").notNull(),
   created_at: timestamp("created_at").defaultNow(),
@@ -106,6 +106,7 @@ export type NewRawEnrichedInfo = typeof rawEnrichedInfo.$inferInsert;
 
 export const structuredEnrichedInfo = pgTable("enriched_info", {
   id: varchar("id", { length: 100 }).primaryKey(),
+  indicator: varchar("indicator", {length: 100 }).references(() => indicators.indicator),
   enrichId: varchar("enrich_id", { length: 100 }).references(
     () => rawEnrichedInfo.id
   ),
