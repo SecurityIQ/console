@@ -1,10 +1,12 @@
+import { Clipboard } from "lucide-react";
 import { css } from "styled-system/css";
+import ClickToCopy from "./click-to-copy";
 
 interface Props {
-    indicators: {value: string, type: 'ip' | 'domain' | 'hash' | 'url'}[];
+    indicators: { value: string, type: 'ip' | 'domain' | 'hash' | 'url' }[];
 }
 
-export default function IndicatorTable({indicators}: Props) {
+export default function IndicatorTable({ indicators }: Props) {
     const tableHeader = css({
         padding: '12px',
         textAlign: 'left',
@@ -18,14 +20,24 @@ export default function IndicatorTable({indicators}: Props) {
         padding: '12px',
         textAlign: 'left',
         borderBottom: '1px solid #e5e7eb',
-        
+        maxW: 0,
+        width: '100%',
     })
+
+    const clickToCopyWrapper = css({
+        display: 'block',
+        width: '100%',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+    })
+
     return (
         <table className={
             css({
                 width: '100%',
                 borderCollapse: 'separate',
                 borderSpacing: '0',
+                tableLayout: 'fixed',
             })
         }>
             <thead>
@@ -38,7 +50,11 @@ export default function IndicatorTable({indicators}: Props) {
             <tbody>
                 {indicators.map((indicator, index) => (
                     <tr key={index}>
-                        <td className={tableData}>{indicator.value}</td>
+                        <td className={tableData}>
+                            <div className={clickToCopyWrapper}>
+                               <ClickToCopy text={indicator.value} />
+                            </div>
+                        </td>
                         <td className={tableData}>{indicator.type}</td>
                         <td className={tableData}><button className={
                             css({

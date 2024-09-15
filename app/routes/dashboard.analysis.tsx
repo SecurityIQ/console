@@ -114,6 +114,15 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   };
 }
 
+// an enum of indicator types to number of group (1, 2...)
+
+const indicatorTypes: Record<string, number> = {
+  ip: 2,
+  domain: 4,
+  hash: 6,
+  url: 8,
+}
+
 export default function IOCAnalysis() {
   const actionData = useActionData<typeof action>();
   const loaderData = useLoaderData<typeof loader>()
@@ -145,10 +154,11 @@ export default function IOCAnalysis() {
         nodes: loaderData.iocs.map((ioc) => {
           return {
             id: ioc.indicator,
-            group: 1,
+            group: indicatorTypes[ioc.type],
           }
         }),
-        links: [],
+
+        links: []
       })
 
       setIndicators(loaderData.iocs.map((ioc) => {
